@@ -183,7 +183,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 152161468}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1059,6 +1059,7 @@ GameObject:
   - component: {fileID: 882378266}
   - component: {fileID: 882378265}
   - component: {fileID: 882378264}
+  - component: {fileID: 882378267}
   m_Layer: 5
   m_Name: InputField (TMP)
   m_TagString: Untagged
@@ -1167,7 +1168,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1766510572}
+      - m_Target: {fileID: 882378267}
         m_TargetAssemblyTypeName: PlayerNameInput, Assembly-CSharp
         m_MethodName: SetPlayerName
         m_Mode: 1
@@ -1235,6 +1236,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882378262}
   m_CullTransparentMesh: 1
+--- !u!114 &882378267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882378262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cdb7222b0faa4249ae9129ed89529d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1441393395
 GameObject:
   m_ObjectHideFlags: 0
@@ -1282,7 +1295,7 @@ MonoBehaviour:
   maxPlayersPerRoom: 4
   mConnectionProgress: {fileID: 321774145}
   mBtnJoinRoom: {fileID: 1966965367}
-  mInpPlayerName: {fileID: 882378262}
+  mInpPlayerName: {fileID: 2043497295}
 --- !u!1 &1683590992
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,7 +1455,6 @@ GameObject:
   - component: {fileID: 1766510570}
   - component: {fileID: 1766510569}
   - component: {fileID: 1766510568}
-  - component: {fileID: 1766510572}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1535,18 +1547,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1766510572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1766510567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cdb7222b0faa4249ae9129ed89529d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1966965367
 GameObject:
   m_ObjectHideFlags: 0
@@ -1631,9 +1631,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
-        m_MethodName: OnClickMultiPlayer
+      - m_Target: {fileID: 1441393397}
+        m_TargetAssemblyTypeName: PGGE.Multiplayer.ConnectionController, Assembly-CSharp
+        m_MethodName: Connect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

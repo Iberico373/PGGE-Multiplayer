@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PGGE.Patterns;
 using PGGE;
+using Photon.Pun;
 
 public class Player : MonoBehaviour
 {
@@ -47,6 +48,8 @@ public class Player : MonoBehaviour
   [SerializeField]
   AudioClip noAmmoSoundClip;
 
+  private PhotonView mPhotonView;
+
 
   // Start is called before the first frame update
   void Start()
@@ -57,10 +60,17 @@ public class Player : MonoBehaviour
     mFsm.SetCurrentState((int)PlayerStateType.MOVEMENT);
 
     PlayerConstants.PlayerMask = mPlayerMask;
+
+    mPhotonView = GetComponent<PhotonView>();
   }
 
   void Update()
   {
+    if (!mPhotonView.IsMine)
+    {
+        return;
+    }
+
     mFsm.Update();
     Aim();
 
@@ -179,6 +189,11 @@ public class Player : MonoBehaviour
 
   public void Move()
   {
+    if (!mPhotonView.IsMine)
+    {
+        return;
+    }
+
     mPlayerMovement.HandleInputs();
     mPlayerMovement.Move();
   }

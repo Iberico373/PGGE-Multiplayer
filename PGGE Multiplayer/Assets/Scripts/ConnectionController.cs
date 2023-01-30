@@ -74,9 +74,9 @@ namespace PGGE.Multiplayer
                 ", so we create by calling: " +
                 "PhotonNetwork.CreateRoom()");
 
-            // Failed to join a random room.
-            // This may happen if no room exists or 
-            // they are all full. In either case, we create a new room.
+            //Failed to join a random room.
+            //This may happen if no room exists or 
+            //they are all full. In either case, we create a new room.
             PhotonNetwork.CreateRoom(null, new RoomOptions{MaxPlayers = maxPlayersPerRoom});
         }
 

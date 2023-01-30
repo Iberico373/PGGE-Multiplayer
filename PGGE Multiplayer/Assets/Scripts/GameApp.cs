@@ -59,7 +59,8 @@ public class GameApp : Singleton<GameApp>
     // Outputs current scene build index and name to console
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("OnSceneLoaded - Scene Index: " + scene.buildIndex + "Scene Name: " + scene.name);
+        //Debug.Log("OnSceneLoaded - Scene Index: " + scene.buildIndex + " Scene Name: " + scene.name);
+        Debug.Log("OnSceneLoaded - Scene: " + scene.name + " (" + scene.buildIndex + ")");
         Debug.Log(mode);
     }
 }

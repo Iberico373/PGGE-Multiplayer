@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-using System.Text;
+using TMPro;
 
 public class PlayerNameInput : MonoBehaviour
 {
     //PlayerPrefs key for the player's name
     const string playerNamePrefKey = "PlayerName";
-    private InputField mInputField;
+    private TMP_InputField mInputField;
 
     private void Start()
     {
         //Set player name to be the same as playerNamePrefKey
         //If playerNamePrefKey is empty, set name as empty
         string defaultName = string.Empty;
-        mInputField = this.GetComponent<InputField>();
+        mInputField = this.GetComponent<TMPro.TMP_InputField>();
 
         if (mInputField != null)
         {
