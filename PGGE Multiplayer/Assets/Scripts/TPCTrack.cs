@@ -14,7 +14,7 @@ namespace PGGE
     public override void Update()
     {
       Vector3 targetPos = mPlayerTransform.position;
-      targetPos.y += CameraConstants.CameraPositionOffset.y;
+      targetPos.y += GameConstants.CameraPositionOffset.y;
       mCameraTransform.LookAt(targetPos);
     }
   }

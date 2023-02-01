@@ -18,8 +18,8 @@ public class ThirdPersonCamera : MonoBehaviour
 
     TPCBase mThirdPersonCamera;
     // Get from Unity Editor.
-    public Vector3 mPositionOffset = new Vector3(0.0f, 2.0f, -2.5f);
     public Vector3 mAngleOffset = new Vector3(0.0f, 0.0f, 0.0f);
+    public Vector3 mPositionOffset = new Vector3(0.0f, 2.0f, -2.5f);
     [Tooltip("The damping factor to smooth the changes in position and rotation of the camera.")]
     public float mDamping = 1.0f;
 
@@ -31,16 +31,23 @@ public class ThirdPersonCamera : MonoBehaviour
     public CameraType mCameraType = CameraType.Follow_Track_Pos;
     Dictionary<CameraType, TPCBase> mThirdPersonCameraDict = new Dictionary<CameraType, TPCBase>();
 
+    void Awake()
+    {
+        string filepath = 
+            @"C:\\Users\\julia\\Desktop\\GitHub Thingies\\PGGE-Multiplayer\\PGGE Multiplayer\\Assets\\Resources\\DataFiles\\gameconstants.txt";
+
+        GameConstants.LoadData(filepath);   
+    }
+
     void Start()
     {
-        // Set to CameraConstants class so that other objects can use.
-        CameraConstants.Damping = mDamping;
-        CameraConstants.CameraPositionOffset = mPositionOffset;
-        CameraConstants.CameraAngleOffset = mAngleOffset;
-        CameraConstants.MinPitch = mMinPitch;
-        CameraConstants.MaxPitch = mMaxPitch;
-        CameraConstants.RotationSpeed = mRotationSpeed;
-
+        //Set to GameConstants class so that other objects can use.
+        mDamping = GameConstants.Damping;
+        mPositionOffset = GameConstants.CameraPositionOffset;
+        mAngleOffset = GameConstants.CameraAngleOffset;
+        mMinPitch= GameConstants.MinPitch;
+        mMaxPitch= GameConstants.MaxPitch;
+        mRotationSpeed = GameConstants.RotationSpeed;
 
         //mThirdPersonCamera = new TPCTrack(transform, mPlayer);
         //mThirdPersonCamera = new TPCFollowTrackPosition(transform, mPlayer);
@@ -69,12 +76,12 @@ public class ThirdPersonCamera : MonoBehaviour
     {
         // Update the game constant parameters every frame 
         // so that changes applied on the editor can be reflected
-        CameraConstants.Damping = mDamping;
-        CameraConstants.CameraPositionOffset = mPositionOffset;
-        CameraConstants.CameraAngleOffset = mAngleOffset;
-        CameraConstants.MinPitch = mMinPitch;
-        CameraConstants.MaxPitch = mMaxPitch;
-        CameraConstants.RotationSpeed = mRotationSpeed;
+        GameConstants.Damping = mDamping;
+        GameConstants.CameraPositionOffset = mPositionOffset;
+        GameConstants.CameraAngleOffset = mAngleOffset;
+        GameConstants.MinPitch = mMinPitch;
+        GameConstants.MaxPitch = mMaxPitch;
+        GameConstants.RotationSpeed = mRotationSpeed;
 
         mThirdPersonCamera = mThirdPersonCameraDict[mCameraType];
     }

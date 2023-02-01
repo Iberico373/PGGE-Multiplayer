@@ -16,7 +16,7 @@ namespace PGGE
         {
             // We apply the initial rotation to the camera.
             Quaternion initialRotation =
-                Quaternion.Euler(CameraConstants.CameraAngleOffset);
+                Quaternion.Euler(GameConstants.CameraAngleOffset);
 
             // Allow rotation tracking of the player
             // so that our camera rotates when the Player rotates and at the same
@@ -24,7 +24,7 @@ namespace PGGE
             mCameraTransform.rotation = Quaternion.Lerp(
                 mCameraTransform.rotation,
                 mPlayerTransform.rotation * initialRotation,
-                Time.deltaTime * CameraConstants.Damping);
+                Time.deltaTime * GameConstants.Damping);
 
             base.Update();
         }

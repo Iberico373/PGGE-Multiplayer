@@ -36,16 +36,16 @@ namespace PGGE
 #endif
 
             // We apply the initial rotation to the camera.
-            Quaternion initialRotation = Quaternion.Euler(CameraConstants.CameraAngleOffset);
+            Quaternion initialRotation = Quaternion.Euler(GameConstants.CameraAngleOffset);
 
             Vector3 eu = mCameraTransform.rotation.eulerAngles;
 
-            angleX -= my * CameraConstants.RotationSpeed;
+            angleX -= my * GameConstants.RotationSpeed;
 
             // We clamp the angle along the Xaxis to be between the min and max pitch.
-            angleX = Mathf.Clamp(angleX, CameraConstants.MinPitch, CameraConstants.MaxPitch);
+            angleX = Mathf.Clamp(angleX, GameConstants.MinPitch, GameConstants.MaxPitch);
 
-            eu.y += mx * CameraConstants.RotationSpeed;
+            eu.y += mx * GameConstants.RotationSpeed;
             Quaternion newRot = Quaternion.Euler(angleX, eu.y, 0.0f) * initialRotation;
 
             mCameraTransform.rotation = newRot;
@@ -56,13 +56,13 @@ namespace PGGE
 
             Vector3 targetPos = mPlayerTransform.position;
             Vector3 desiredPosition = targetPos
-                + forward * CameraConstants.CameraPositionOffset.z
-                + right * CameraConstants.CameraPositionOffset.x
-                + up * CameraConstants.CameraPositionOffset.y;
+                + forward * GameConstants.CameraPositionOffset.z
+                + right * GameConstants.CameraPositionOffset.x
+                + up * GameConstants.CameraPositionOffset.y;
 
             Vector3 position = Vector3.Lerp(mCameraTransform.position,
                 desiredPosition,
-                Time.deltaTime * CameraConstants.Damping);
+                Time.deltaTime * GameConstants.Damping);
 
             mCameraTransform.position = position;
 

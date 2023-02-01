@@ -29,14 +29,14 @@ namespace PGGE
             // Note that we cannot just add the offset.
             // You will need to take care of the direction as well.
             Vector3 desiredPosition = targetPos
-                + forward * CameraConstants.CameraPositionOffset.z
-                + right * CameraConstants.CameraPositionOffset.x
-                + up * CameraConstants.CameraPositionOffset.y;
+                + forward * GameConstants.CameraPositionOffset.z
+                + right * GameConstants.CameraPositionOffset.x
+                + up * GameConstants.CameraPositionOffset.y;
 
             // Finally, we change the position of the camera, 
             // not directly, but by applying Lerp.
             Vector3 position = Vector3.Lerp(mCameraTransform.position,
-                desiredPosition, Time.deltaTime * CameraConstants.Damping);
+                desiredPosition, Time.deltaTime * GameConstants.Damping);
             mCameraTransform.position = position;
 
             base.RepositionCamera();

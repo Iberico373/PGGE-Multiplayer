@@ -123,14 +123,14 @@ public class PlayerMovement : MonoBehaviour
         mAnimator.SetBool("Crouch", crouch);
         if(crouch)
         {
-            tempHeight = CameraConstants.CameraPositionOffset;
+            tempHeight = GameConstants.CameraPositionOffset;
             HalfHeight = tempHeight;
             HalfHeight.y *= 0.5f;
-            CameraConstants.CameraPositionOffset = HalfHeight;
+            GameConstants.CameraPositionOffset = HalfHeight;
         }
         else
         {
-            CameraConstants.CameraPositionOffset = tempHeight;
+            GameConstants.CameraPositionOffset = tempHeight;
         }
     }
 }
