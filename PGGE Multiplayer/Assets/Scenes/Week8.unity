@@ -297,6 +297,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &323068529 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7611753288725090856, guid: a921000e2649c784aa98633d35583e6d, type: 3}
+  m_PrefabInstance: {fileID: 1398964572}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &529669891
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -984,7 +989,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1312bf48c396a549b13b7d89665949c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mPlayer: {fileID: 0}
+  mPlayer: {fileID: 323068529}
   mAngleOffset: {x: 0, y: 0, z: 0}
   mPositionOffset: {x: 1, y: 2, z: -4}
   mDamping: 10
