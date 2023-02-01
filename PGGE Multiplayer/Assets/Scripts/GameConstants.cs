@@ -18,19 +18,13 @@ namespace PGGE
         //set the properties of the "GameConstants" class
         public static void LoadData(string filepath)
         {
-            try
-            {
-                FileInfo fi = new FileInfo(filepath);
+            FileInfo fi = new FileInfo(filepath);
 
+            try
+            {            
                 //Closes I/O stream if file is null/incompatible
                 using (StreamReader reader = fi.OpenText()) 
                 {
-                    //Open the file in the file path to read
-                    //using the OpenRead() function
-                    FileStream fs = File.OpenRead(filepath);
-                    //Read characters from incoming byte stream
-                    StreamReader sr = new StreamReader(fs);
-
                     //List of string to store lines of text from the file
                     //that's being read
                     List<string> text = new List<string>();

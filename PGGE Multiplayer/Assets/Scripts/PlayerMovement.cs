@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using PGGE;
+using System.IO;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -71,6 +72,16 @@ public class PlayerMovement : MonoBehaviour
             crouch = !crouch;
             Crouch();
         }
+
+        if (Input.GetKey(KeyCode.P)) 
+        {
+            SaveData();
+        }
+
+        if (Input.GetKey(KeyCode.L))
+        {
+            LoadData(@".\gamedata.txt");
+        }
     }
 
     private Vector3 moveDirection = Vector3.zero;
@@ -133,4 +144,69 @@ public class PlayerMovement : MonoBehaviour
             GameConstants.CameraPositionOffset = tempHeight;
         }
     }
+
+    //Saves player position and rotation into a txt file
+    void SaveData()
+    {
+        string filename = @".\gamedata.txt";
+
+        try
+        {
+            using (StreamWriter str = new StreamWriter(filename))
+            {
+                str.WriteLine(transform.position.ToString());
+                str.WriteLine(transform.rotation.ToString());
+
+                Debug.Log("File saved succesfully!");
+            }
+        }
+
+        catch (IOException ex)
+        {
+            Debug.Log(ex.ToString());
+        }
+    }
+
+    void LoadData(string filepath)
+    {
+        FileInfo fi = new FileInfo(filepath);
+
+        try
+        {
+            //Closes I/O stream if file is null/incompatible
+            using (StreamReader reader = fi.OpenText())
+            {
+                //List of string to store lines of text from the file
+                //that's being read
+                List<string> text = new List<string>();
+
+                while (!reader.EndOfStream)
+                {
+                    text.Add(reader.ReadLine());
+                }
+
+                ProcessInputText(text);
+            }
+        }
+
+        catch (IOException ex)
+        {
+            Debug.Log(ex.ToString());
+        }
+    }
+
+    void ProcessInputText(List<string> text)
+    {
+        char[] seperators = new char[]{' ', ',', '(', ')'};
+
+        string[] str_position = text[0].Split(seperators, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] str_rotation = text[1].Split(seperators, System.StringSplitOptions.RemoveEmptyEntries);
+
+        transform.position = new Vector3(float.Parse(str_position[0]),
+            float.Parse(str_position[1]), float.Parse(str_position[2]));
+
+        transform.rotation = new Quaternion(float.Parse(str_rotation[0]), 
+            float.Parse(str_rotation[1]), float.Parse(str_rotation[2]), float.Parse(str_rotation[3]));
+    }
+
 }
