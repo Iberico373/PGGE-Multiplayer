@@ -148,7 +148,7 @@ public class PlayerMovement : MonoBehaviour
     //Saves player position and rotation into a txt file
     void SaveData()
     {
-        string filename = @".\gamedata.txt";
+        string filename = @".Assets\Resources\DataFiles\gamedata.txt";
 
         try
         {

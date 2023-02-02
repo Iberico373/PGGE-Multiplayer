@@ -1,0 +1,1 @@
+{"mCameraAngleOffset":{"x":10.0,"y":0.0,"z":0.0},"mCameraPositionOffset":{"x":0.0,"y":2.0,"z":-4.0},"mDamping":100.0,"mRotationSpeed":5.0,"mMinPitch":-30.0,"mMaxPitch":30.0}

@@ -33,8 +33,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void Awake()
     {
-        string filepath = 
-            @"C:\\Users\\julia\\Desktop\\GitHub Thingies\\PGGE-Multiplayer\\PGGE Multiplayer\\Assets\\Resources\\DataFiles\\gameconstants.txt";
+        string filepath = @".\Assets\Resources\DataFiles\gameconstantsjson.txt";
 
         GameConstants.LoadData(filepath);   
     }
@@ -48,6 +47,8 @@ public class ThirdPersonCamera : MonoBehaviour
         mMinPitch= GameConstants.MinPitch;
         mMaxPitch= GameConstants.MaxPitch;
         mRotationSpeed = GameConstants.RotationSpeed;
+
+        GameConstants.SaveData();
 
         //mThirdPersonCamera = new TPCTrack(transform, mPlayer);
         //mThirdPersonCamera = new TPCFollowTrackPosition(transform, mPlayer);
