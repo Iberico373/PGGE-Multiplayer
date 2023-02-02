@@ -1,11 +1,22 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
 
 namespace PGGE.Multiplayer
 {
     public class ConnectionController : MonoBehaviourPunCallbacks
     {
+        public GameObject mLoginPanel;
+
+        public GameObject mSelectionPanel;
+        public GameObject mRoomListContent;
+        public GameObject mRoomListPrefab;        
+
+        private Dictionary<string, RoomInfo> mCachedRoomList;
+        private Dictionary<string, GameObject> mRoomListEntries;
+
         //To keep track of the current version of the game so that
         //we don't clash with different versions of the game
         const string gameVersion = "1";
@@ -13,8 +24,6 @@ namespace PGGE.Multiplayer
         public byte maxPlayersPerRoom = 4;
 
         public GameObject mConnectionProgress;
-        public GameObject mBtnJoinRoom;
-        public GameObject mInpPlayerName;
         bool isConnecting = false;
 
         private void Awake()
@@ -23,41 +32,55 @@ namespace PGGE.Multiplayer
             //the master client and all clients in the same 
             //room sync their level automatically
             PhotonNetwork.AutomaticallySyncScene = true;
-        }
+            mCachedRoomList = new Dictionary<string, RoomInfo>();
+            mRoomListEntries = new Dictionary<string, GameObject>();
 
-        private void Start()
-        {
+            ActivatePanel(mLoginPanel.name);
             mConnectionProgress.SetActive(false);
         }
 
-        //Checks if we are connected to the photon server or not
-        //If yes, then join a random room
-        //Otherwise, attempt to connect to the photon server
+        //Attempt to connect to photon's server
         public void Connect()
         {
-            mBtnJoinRoom.SetActive(false); 
-            mInpPlayerName.SetActive(false);
-            mConnectionProgress.SetActive(true);
-
             if (PhotonNetwork.IsConnected)
             {
-                PhotonNetwork.JoinRandomRoom();
+                OnConnectedToMaster();
+                return;
             }
 
-            else
-            {
-                isConnecting = PhotonNetwork.ConnectUsingSettings();
-                PhotonNetwork.GameVersion = gameVersion;
-            }
+            PhotonNetwork.ConnectUsingSettings();
+            ActivatePanel();
+            mConnectionProgress.SetActive(true);            
         }
 
-        public override void OnConnectedToMaster()
+        //Join a random open room
+        public void JoinRandomRoom()
         {
-            //Join a random room when connected to the photon server
-            if (isConnecting)
+            PhotonNetwork.JoinRandomRoom();
+        }
+
+        //Return back to main menu scene when called
+        public void BackToMainMenu()
+        {
+            if (PhotonNetwork.InLobby)
             {
-                Debug.Log("OnConnectedToMaster() was called by PUN");
-                PhotonNetwork.JoinRandomRoom();
+                PhotonNetwork.LeaveLobby();
+            }
+
+            SceneManager.LoadScene("Menu");
+        }
+
+        //Contains all PUN related callbacks
+        #region PUN Callbacks
+        //Displays a list of available rooms when connected to proton's server
+        public override void OnConnectedToMaster()
+        {            
+            ActivatePanel(mSelectionPanel.name);
+            mConnectionProgress.SetActive(false);
+
+            if (!PhotonNetwork.InLobby)
+            {
+                PhotonNetwork.JoinLobby();
             }
         }
 
@@ -89,6 +112,88 @@ namespace PGGE.Multiplayer
             {
                 Debug.Log("We load the default room for multiplayer");
                 PhotonNetwork.LoadLevel("MultiplayerMap00");
+            }
+        }
+
+        public override void OnRoomListUpdate(List<RoomInfo> roomList)
+        {
+            ClearRoomListView();
+
+            UpdateCachedRoomList(roomList);
+            UpdateRoomListView();
+        }
+
+        public override void OnJoinedLobby()
+        {
+            // whenever this joins a new lobby, clear any previous room lists
+            mCachedRoomList.Clear();
+            ClearRoomListView();
+        }
+
+        public override void OnLeftLobby()
+        {
+            mCachedRoomList.Clear();
+            ClearRoomListView();
+        }
+        #endregion
+
+        //Activates panel requested in the argument and deactivates
+        //all other active panels
+        public void ActivatePanel(string panelName = "None")
+        {
+            mLoginPanel.SetActive(panelName.Equals(mLoginPanel.name));
+            mSelectionPanel.SetActive(panelName.Equals(mSelectionPanel.name));
+        }
+
+        //Clears room list
+        void ClearRoomListView()
+        {
+            foreach (GameObject entry in mRoomListEntries.Values)
+            {
+                Destroy(entry.gameObject);
+            }
+
+            mRoomListEntries.Clear();
+        }
+
+        void UpdateCachedRoomList(List<RoomInfo> roomList)
+        {
+            foreach (RoomInfo info in roomList)
+            {
+                // Remove room from cached room list if it got closed, became invisible or was marked as removed
+                if (!info.IsOpen || !info.IsVisible || info.RemovedFromList)
+                {
+                    if (mCachedRoomList.ContainsKey(info.Name))
+                    {
+                        mCachedRoomList.Remove(info.Name);
+                    }
+
+                    continue;
+                }
+
+                // Update cached room info
+                if (mCachedRoomList.ContainsKey(info.Name))
+                {
+                    mCachedRoomList[info.Name] = info;
+                }
+                // Add new room info to cache
+                else
+                {
+                    mCachedRoomList.Add(info.Name, info);
+                }
+            }
+        }
+
+        void UpdateRoomListView()
+        {
+            foreach (RoomInfo info in mCachedRoomList.Values)
+            {
+                GameObject entry = Instantiate(mRoomListPrefab);
+                entry.transform.SetParent(mRoomListContent.transform);
+                entry.transform.localScale = Vector3.one;
+                entry.GetComponent<Photon.Pun.Demo.Asteroids.RoomListEntry>().Initialize(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
+
+                mRoomListEntries.Add(info.Name, entry);
             }
         }
     }

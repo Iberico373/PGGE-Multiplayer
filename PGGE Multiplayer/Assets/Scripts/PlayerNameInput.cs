@@ -16,7 +16,7 @@ public class PlayerNameInput : MonoBehaviour
         //Set player name to be the same as playerNamePrefKey
         //If playerNamePrefKey is empty, set name as empty
         string defaultName = string.Empty;
-        mInputField = GetComponent<TMPro.TMP_InputField>();
+        mInputField = GetComponent<TMP_InputField>();
 
         if (mInputField != null)
         {
