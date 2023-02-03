@@ -19,7 +19,13 @@ namespace PGGE
         //Used to write current settings for the camera into a text file in json format
         public static void SaveData()
         {
-            string filename = @".\Assets\Resources\DataFiles\gameconstantsjson.txt";
+            string directory = Application.persistentDataPath + @"\DataFiles";
+            string filename = Application.persistentDataPath + @"\DataFiles\gameconstants.txt";
+
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }      
 
             try
             {

@@ -18,35 +18,28 @@ public class ThirdPersonCamera : MonoBehaviour
 
     TPCBase mThirdPersonCamera;
     // Get from Unity Editor.
-    public Vector3 mAngleOffset = new Vector3(0.0f, 0.0f, 0.0f);
-    public Vector3 mPositionOffset = new Vector3(0.0f, 2.0f, -2.5f);
+    public Vector3 mAngleOffset = new Vector3(10.0f, 0.0f, 0.0f);
+    public Vector3 mPositionOffset = new Vector3(0.0f, 2.0f, -4f);
     [Tooltip("The damping factor to smooth the changes in position and rotation of the camera.")]
-    public float mDamping = 1.0f;
+    public float mDamping = 100.0f;
 
     public float mMinPitch = -30.0f;
     public float mMaxPitch = 30.0f;
-    public float mRotationSpeed = 50.0f;
+    public float mRotationSpeed = 5.0f;
     public FixedTouchField mTouchField;
 
     public CameraType mCameraType = CameraType.Follow_Track_Pos;
     Dictionary<CameraType, TPCBase> mThirdPersonCameraDict = new Dictionary<CameraType, TPCBase>();
 
-    void Awake()
-    {
-        string filepath = @".\Assets\Resources\DataFiles\gameconstantsjson.txt";
-
-        GameConstants.LoadData(filepath);   
-    }
-
     void Start()
     {
         //Set to GameConstants class so that other objects can use.
-        mDamping = GameConstants.Damping;
-        mPositionOffset = GameConstants.CameraPositionOffset;
-        mAngleOffset = GameConstants.CameraAngleOffset;
-        mMinPitch= GameConstants.MinPitch;
-        mMaxPitch= GameConstants.MaxPitch;
-        mRotationSpeed = GameConstants.RotationSpeed;
+        GameConstants.Damping = mDamping;
+        GameConstants.CameraPositionOffset = mPositionOffset;
+        GameConstants.CameraAngleOffset = mAngleOffset;
+        GameConstants.MinPitch = mMinPitch;
+        GameConstants.MaxPitch = mMaxPitch;
+        GameConstants.RotationSpeed = mRotationSpeed;
 
         GameConstants.SaveData();
 

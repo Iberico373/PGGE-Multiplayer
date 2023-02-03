@@ -1135,7 +1135,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mPlayerPrefabName: Prefabs/SciFiPlayer_Multiplayer
   mSpawnPoints: {fileID: 531549117}
-  playerCam: {fileID: 963194225}
   mPlayerGameObject: {fileID: 0}
 --- !u!1 &1411860964
 GameObject:

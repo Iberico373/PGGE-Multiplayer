@@ -115,17 +115,18 @@ namespace PGGE.Multiplayer
             }
         }
 
+        //Called whenever any room gets updated in the lobby
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
             ClearRoomListView();
 
-            UpdateCachedRoomList(roomList);
+            UpdateRoomList(roomList);
             UpdateRoomListView();
         }
 
+        //Whenever the player joins a new lobby, clear any previous room lists
         public override void OnJoinedLobby()
         {
-            // whenever this joins a new lobby, clear any previous room lists
             mCachedRoomList.Clear();
             ClearRoomListView();
         }
@@ -156,11 +157,12 @@ namespace PGGE.Multiplayer
             mRoomListEntries.Clear();
         }
 
-        void UpdateCachedRoomList(List<RoomInfo> roomList)
+        //Update cached room list
+        void UpdateRoomList(List<RoomInfo> roomList)
         {
             foreach (RoomInfo info in roomList)
             {
-                // Remove room from cached room list if it got closed, became invisible or was marked as removed
+                //Remove room from cached room list if it got closed, became invisible or was marked as removed
                 if (!info.IsOpen || !info.IsVisible || info.RemovedFromList)
                 {
                     if (mCachedRoomList.ContainsKey(info.Name))
@@ -171,12 +173,12 @@ namespace PGGE.Multiplayer
                     continue;
                 }
 
-                // Update cached room info
+                //Update current room info 
                 if (mCachedRoomList.ContainsKey(info.Name))
                 {
                     mCachedRoomList[info.Name] = info;
                 }
-                // Add new room info to cache
+                
                 else
                 {
                     mCachedRoomList.Add(info.Name, info);
@@ -184,6 +186,8 @@ namespace PGGE.Multiplayer
             }
         }
 
+        //Updates room list UI element in order to reflect
+        //the cached room list
         void UpdateRoomListView()
         {
             foreach (RoomInfo info in mCachedRoomList.Values)
@@ -191,7 +195,7 @@ namespace PGGE.Multiplayer
                 GameObject entry = Instantiate(mRoomListPrefab);
                 entry.transform.SetParent(mRoomListContent.transform);
                 entry.transform.localScale = Vector3.one;
-                entry.GetComponent<Photon.Pun.Demo.Asteroids.RoomListEntry>().Initialize(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
+                entry.GetComponent<RoomPrefab>().Initialize(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
 
                 mRoomListEntries.Add(info.Name, entry);
             }
