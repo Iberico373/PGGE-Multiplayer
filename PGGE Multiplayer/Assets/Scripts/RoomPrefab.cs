@@ -19,6 +19,8 @@ public class RoomPrefab : MonoBehaviour
 
     public void Start()
     {
+        //Add listener to room prefab button to let the player 
+        //join the room
         btnJoin.GetComponent<Button>().onClick.AddListener(() =>
         {
             if (PhotonNetwork.InLobby)
@@ -28,11 +30,6 @@ public class RoomPrefab : MonoBehaviour
 
             PhotonNetwork.JoinRoom(mRoomName);
         });
-    }
-
-    private void Update()
-    {
-        
     }
 
     //Initialize prefab with appropriate room information

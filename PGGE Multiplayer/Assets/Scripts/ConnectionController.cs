@@ -11,7 +11,6 @@ namespace PGGE.Multiplayer
     {
         UNFILTERED,
         NAME,
-        MAXPLAYERS
     }
 
     public class ConnectionController : MonoBehaviourPunCallbacks
@@ -27,8 +26,12 @@ namespace PGGE.Multiplayer
         public TMP_InputField mRoomNameInput;
         public TMP_InputField mMaxPlayerInput;
 
+        //Dictionary containing the room info list of every room on the 
+        //proton server 
         private Dictionary<string, RoomInfo> mCachedRoomList;
+        //Dicitonary containing the room info list once it's filtered 
         private Dictionary<string, RoomInfo> mFilteredCachedRoomList;
+        //Dictionary containing the UI element of the room list
         private Dictionary<string, GameObject> mRoomListEntries;
 
         //To keep track of the current version of the game so that
@@ -176,11 +179,16 @@ namespace PGGE.Multiplayer
             mCreateRoomPanel.SetActive(panelName.Equals(mCreateRoomPanel.name));  
         }
 
+        //Filters room list by name
         public void FilterRoomByName()
         {
+            //Clear the filtered dictionary in order to prevent duplicates 
+            //from being added
             mFilteredCachedRoomList.Clear();
             string roomName = mNameSearchInput.text;
 
+            //If player empties the name search, set list display to be unfiltered
+            //and return from function
             if (roomName.Equals(string.Empty))
             {
                 mCurrentFilter = FilterType.UNFILTERED;
@@ -190,10 +198,15 @@ namespace PGGE.Multiplayer
                 return;
             }
 
+            //Otherwise set filter type to be based on the room's name
             mCurrentFilter = FilterType.NAME;
 
+            //Compare every room name in the cached room list to the one 
+            //inputted by the player
             foreach (string name in mCachedRoomList.Keys)
             {
+                //If room name contains characters from the player inputted name
+                //add that room to the filtered dictionary
                 if (name.Contains(roomName))
                 {
                     mFilteredCachedRoomList.Add(name, mCachedRoomList[name]);
@@ -275,6 +288,7 @@ namespace PGGE.Multiplayer
         //the cached room list
         void UpdateRoomListView()
         {
+            //Display unfiltered list when current filter type is unfiltered
             if (mCurrentFilter == FilterType.UNFILTERED)
             {
                 foreach (RoomInfo info in mCachedRoomList.Values)
@@ -288,6 +302,7 @@ namespace PGGE.Multiplayer
                 }
             }
 
+            //Otherwise display the filtered list
             else
             {
                 foreach (RoomInfo info in mFilteredCachedRoomList.Values)
