@@ -2,19 +2,33 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 using System.Collections.Generic;
 
 namespace PGGE.Multiplayer
 {
+    enum FilterType
+    {
+        UNFILTERED,
+        NAME,
+        MAXPLAYERS
+    }
+
     public class ConnectionController : MonoBehaviourPunCallbacks
     {
         public GameObject mLoginPanel;
 
         public GameObject mSelectionPanel;
         public GameObject mRoomListContent;
-        public GameObject mRoomListPrefab;        
+        public GameObject mRoomListPrefab;
+        public TMP_InputField mNameSearchInput;
+
+        public GameObject mCreateRoomPanel;
+        public TMP_InputField mRoomNameInput;
+        public TMP_InputField mMaxPlayerInput;
 
         private Dictionary<string, RoomInfo> mCachedRoomList;
+        private Dictionary<string, RoomInfo> mFilteredCachedRoomList;
         private Dictionary<string, GameObject> mRoomListEntries;
 
         //To keep track of the current version of the game so that
@@ -24,6 +38,7 @@ namespace PGGE.Multiplayer
         public byte maxPlayersPerRoom = 4;
 
         public GameObject mConnectionProgress;
+        FilterType mCurrentFilter = FilterType.UNFILTERED;
         bool isConnecting = false;
 
         private void Awake()
@@ -33,12 +48,15 @@ namespace PGGE.Multiplayer
             //room sync their level automatically
             PhotonNetwork.AutomaticallySyncScene = true;
             mCachedRoomList = new Dictionary<string, RoomInfo>();
+            mFilteredCachedRoomList = new Dictionary<string, RoomInfo>();
             mRoomListEntries = new Dictionary<string, GameObject>();
 
             ActivatePanel(mLoginPanel.name);
             mConnectionProgress.SetActive(false);
         }
 
+        //Contains all functions called by buttons
+        #region Button Functions
         //Attempt to connect to photon's server
         public void Connect()
         {
@@ -69,6 +87,7 @@ namespace PGGE.Multiplayer
 
             SceneManager.LoadScene("Menu");
         }
+        #endregion 
 
         //Contains all PUN related callbacks
         #region PUN Callbacks
@@ -81,7 +100,7 @@ namespace PGGE.Multiplayer
             if (!PhotonNetwork.InLobby)
             {
                 PhotonNetwork.JoinLobby();
-            }
+            }       
         }
 
         public override void OnDisconnected(DisconnectCause cause)
@@ -100,7 +119,7 @@ namespace PGGE.Multiplayer
             //Failed to join a random room.
             //This may happen if no room exists or 
             //they are all full. In either case, we create a new room.
-            PhotonNetwork.CreateRoom(null, new RoomOptions{MaxPlayers = maxPlayersPerRoom});
+            PhotonNetwork.CreateRoom("Room " + Random.Range(1, 1000).ToString(), new RoomOptions{MaxPlayers = maxPlayersPerRoom});
         }
 
         //Load scene named "MultiplayerMap00" for the player that joined the room
@@ -112,6 +131,16 @@ namespace PGGE.Multiplayer
             {
                 Debug.Log("We load the default room for multiplayer");
                 PhotonNetwork.LoadLevel("MultiplayerMap00");
+            }
+        }
+
+        //Reconnects player back to lobby if joining a room failed
+        //(e.g., when a room is full, the player got disconnected, etc.)
+        public override void OnJoinRoomFailed(short returnCode, string message)
+        {
+            if (!PhotonNetwork.InLobby)
+            {
+                PhotonNetwork.JoinLobby();
             }
         }
 
@@ -144,6 +173,55 @@ namespace PGGE.Multiplayer
         {
             mLoginPanel.SetActive(panelName.Equals(mLoginPanel.name));
             mSelectionPanel.SetActive(panelName.Equals(mSelectionPanel.name));
+            mCreateRoomPanel.SetActive(panelName.Equals(mCreateRoomPanel.name));  
+        }
+
+        public void FilterRoomByName()
+        {
+            mFilteredCachedRoomList.Clear();
+            string roomName = mNameSearchInput.text;
+
+            if (roomName.Equals(string.Empty))
+            {
+                mCurrentFilter = FilterType.UNFILTERED;
+                ClearRoomListView();
+                UpdateRoomListView();
+
+                return;
+            }
+
+            mCurrentFilter = FilterType.NAME;
+
+            foreach (string name in mCachedRoomList.Keys)
+            {
+                if (name.Contains(roomName))
+                {
+                    mFilteredCachedRoomList.Add(name, mCachedRoomList[name]);
+                }
+            }
+
+            ClearRoomListView();
+            UpdateRoomListView();
+        }
+
+        //Create a room in the PUN lobby
+        public void CreateRoom()
+        {
+            //Set room name according to what the player inputted
+            //If room name is left empty set room name to a default name
+            string roomName = mRoomNameInput.text;
+            roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1, 1000) : roomName;
+
+            //Set room's max player based on player's input
+            byte maxPlayers;
+            byte.TryParse(mMaxPlayerInput.text, out maxPlayers);
+            //Clamp players input between 2 to 8, meaning that
+            //total number of players cannot go below 2 or exceed 8 
+            maxPlayers = (byte)Mathf.Clamp(maxPlayers, 2, 8);
+
+            RoomOptions options = new RoomOptions { MaxPlayers = maxPlayers};
+
+            PhotonNetwork.CreateRoom(roomName, options);
         }
 
         //Clears room list
@@ -160,10 +238,12 @@ namespace PGGE.Multiplayer
         //Update cached room list
         void UpdateRoomList(List<RoomInfo> roomList)
         {
+            Debug.Log("Current filter type: " + mCurrentFilter);
+
             foreach (RoomInfo info in roomList)
             {
                 //Remove room from cached room list if it got closed, became invisible or was marked as removed
-                if (!info.IsOpen || !info.IsVisible || info.RemovedFromList)
+                if (!info.IsVisible || info.RemovedFromList)
                 {
                     if (mCachedRoomList.ContainsKey(info.Name))
                     {
@@ -183,6 +263,11 @@ namespace PGGE.Multiplayer
                 {
                     mCachedRoomList.Add(info.Name, info);
                 }
+            }       
+
+            if (mCurrentFilter == FilterType.NAME)
+            {
+                FilterRoomByName();
             }
         }
 
@@ -190,14 +275,30 @@ namespace PGGE.Multiplayer
         //the cached room list
         void UpdateRoomListView()
         {
-            foreach (RoomInfo info in mCachedRoomList.Values)
+            if (mCurrentFilter == FilterType.UNFILTERED)
             {
-                GameObject entry = Instantiate(mRoomListPrefab);
-                entry.transform.SetParent(mRoomListContent.transform);
-                entry.transform.localScale = Vector3.one;
-                entry.GetComponent<RoomPrefab>().Initialize(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
+                foreach (RoomInfo info in mCachedRoomList.Values)
+                {
+                    GameObject entry = Instantiate(mRoomListPrefab);
+                    entry.transform.SetParent(mRoomListContent.transform);
+                    entry.transform.localScale = Vector3.one;
+                    entry.GetComponent<RoomPrefab>().Initialize(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
 
-                mRoomListEntries.Add(info.Name, entry);
+                    mRoomListEntries.Add(info.Name, entry);
+                }
+            }
+
+            else
+            {
+                foreach (RoomInfo info in mFilteredCachedRoomList.Values)
+                {
+                    GameObject entry = Instantiate(mRoomListPrefab);
+                    entry.transform.SetParent(mRoomListContent.transform);
+                    entry.transform.localScale = Vector3.one;
+                    entry.GetComponent<RoomPrefab>().Initialize(info.Name, (byte)info.PlayerCount, info.MaxPlayers);
+
+                    mRoomListEntries.Add(info.Name, entry);
+                }
             }
         }
     }
