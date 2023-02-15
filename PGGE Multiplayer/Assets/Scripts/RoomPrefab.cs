@@ -13,7 +13,7 @@ public class RoomPrefab : MonoBehaviour
     public TextMeshProUGUI txtJoin;
     public GameObject btnJoin;
 
-    private string mRoomName;
+    private string roomName;
     private Color greenColor = new Color(92, 255, 101, 255);
     private Color redColor = new Color(255, 92, 102, 255);
 
@@ -28,14 +28,14 @@ public class RoomPrefab : MonoBehaviour
                 PhotonNetwork.LeaveLobby();
             }
 
-            PhotonNetwork.JoinRoom(mRoomName);
+            PhotonNetwork.JoinRoom(roomName);
         });
     }
 
     //Initialize prefab with appropriate room information
     public void Initialize(string name, byte currentPlayers, byte maxPlayers)
     {
-        mRoomName = name;
+        roomName = name;
 
         txtRoomName.text = name;
         txtTotalPlayers.text = currentPlayers + " / " + maxPlayers;

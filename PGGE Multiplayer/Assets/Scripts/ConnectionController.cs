@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
@@ -71,7 +72,7 @@ namespace PGGE.Multiplayer
 
             PhotonNetwork.ConnectUsingSettings();
             ActivatePanel();
-            mConnectionProgress.SetActive(true);            
+            mConnectionProgress.SetActive(true);
         }
 
         //Join a random open room
@@ -96,14 +97,14 @@ namespace PGGE.Multiplayer
         #region PUN Callbacks
         //Displays a list of available rooms when connected to proton's server
         public override void OnConnectedToMaster()
-        {            
+        {
             ActivatePanel(mSelectionPanel.name);
             mConnectionProgress.SetActive(false);
 
             if (!PhotonNetwork.InLobby)
             {
                 PhotonNetwork.JoinLobby();
-            }       
+            }
         }
 
         public override void OnDisconnected(DisconnectCause cause)
@@ -122,7 +123,7 @@ namespace PGGE.Multiplayer
             //Failed to join a random room.
             //This may happen if no room exists or 
             //they are all full. In either case, we create a new room.
-            PhotonNetwork.CreateRoom("Room " + Random.Range(1, 1000).ToString(), new RoomOptions{MaxPlayers = maxPlayersPerRoom});
+            PhotonNetwork.CreateRoom("Room " + Random.Range(1, 1000).ToString(), new RoomOptions { MaxPlayers = maxPlayersPerRoom });
         }
 
         //Load scene named "MultiplayerMap00" for the player that joined the room
@@ -176,7 +177,7 @@ namespace PGGE.Multiplayer
         {
             mLoginPanel.SetActive(panelName.Equals(mLoginPanel.name));
             mSelectionPanel.SetActive(panelName.Equals(mSelectionPanel.name));
-            mCreateRoomPanel.SetActive(panelName.Equals(mCreateRoomPanel.name));  
+            mCreateRoomPanel.SetActive(panelName.Equals(mCreateRoomPanel.name));
         }
 
         //Filters room list by name
@@ -232,7 +233,7 @@ namespace PGGE.Multiplayer
             //total number of players cannot go below 2 or exceed 8 
             maxPlayers = (byte)Mathf.Clamp(maxPlayers, 2, 8);
 
-            RoomOptions options = new RoomOptions { MaxPlayers = maxPlayers};
+            RoomOptions options = new RoomOptions { MaxPlayers = maxPlayers };
 
             PhotonNetwork.CreateRoom(roomName, options);
         }
@@ -271,12 +272,12 @@ namespace PGGE.Multiplayer
                 {
                     mCachedRoomList[info.Name] = info;
                 }
-                
+
                 else
                 {
                     mCachedRoomList.Add(info.Name, info);
                 }
-            }       
+            }
 
             if (mCurrentFilter == FilterType.NAME)
             {
